@@ -1,0 +1,59 @@
+pipeline {
+    agent any
+
+    environment {
+        VENV = '/var/lib/jenkins/flask/examples/tutorial/venv'
+        APP_DIR = '/var/lib/jenkins/flask/examples/tutorial'
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                dir("${APP_DIR}") {
+                    sh '''
+                        python3 -m venv venv
+                        ./venv/bin/pip install --upgrade pip
+                        ./venv/bin/pip install -e .
+                        ./venv/bin/pip install pytest
+                    '''
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                dir("${APP_DIR}") {
+                    sh '''
+                        ./venv/bin/pytest
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                dir("${APP_DIR}") {
+                    sh '''
+                        echo "Deploying Flask app...!!!"
+                        nohup ./venv/bin/flask --app flaskr run --host=0.0.0.0 --port=5000 &
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            mail to: 'vermasatyam99@gmail.com',
+                 subject: "SUCCESS: ${env.JOB_NAME} [#${env.BUILD_NUMBER}]",
+                 body: "Build succeeded!\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}\nView: ${env.BUILD_URL}"
+        }
+
+        failure {
+            mail to: 'vermasatyam99@gmail.com',
+                 subject: "FAILURE: ${env.JOB_NAME} [#${env.BUILD_NUMBER}]",
+                 body: "Build failed!\n\nJob: ${env.JOB_NAME}\nBuild: #${env.BUILD_NUMBER}\nView: ${env.BUILD_URL}"
+        }
+    }
+}
+
