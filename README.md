@@ -1,51 +1,42 @@
-# Flask
+##Prerequisites
 
-Flask is a lightweight [WSGI] web application framework. It is designed
-to make getting started quick and easy, with the ability to scale up to
-complex applications. It began as a simple wrapper around [Werkzeug]
-and [Jinja], and has become one of the most popular Python web
-application frameworks.
+-Python 3.12
+- Git
+- Jenkins (with plugins):
+- Pipeline
+- GitHub Integration
+- Blue Ocean
+- Email Extension Plugin
+- Email configuration in Jenkins (SMTP setup and configure with Gmail)
+- GitHub repository forked from:
 
-Flask offers suggestions, but doesn't enforce any dependencies or
-project layout. It is up to the developer to choose the tools and
-libraries they want to use. There are many extensions provided by the
-community that make adding new functionality easy.
 
-[WSGI]: https://wsgi.readthedocs.io/
-[Werkzeug]: https://werkzeug.palletsprojects.com/
-[Jinja]: https://jinja.palletsprojects.com/
+##Install Dependencies
+- Install and configured Jenkins on Local Ubuntu system
+- Install Python and `pip` on Jenkins server
+- Ensure Jenkins has access to the Python environment
 
-## A Simple Example
 
-```python
-# save this as app.py
-from flask import Flask
+##Clone Repo
+- Found random flask project on githup fork and clone the same
 
-app = Flask(__name__)
+##Jenkins Job
+- Created a Jenkins pipeline
+- Stages are devided with by tasks
+- Enabled the trigger
+- GitHub hook trigger for GITScm polling
 
-@app.route("/")
-def hello():
-    return "Hello, World!"
-```
 
-```
-$ flask run
-  * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
-```
+##Jenkins Pipeline stages overview
 
-## Donate
+### Build
+- Creates a virtual environment
+- Installs dependencies via pip
 
-The Pallets organization develops and supports Flask and the libraries
-it uses. In order to grow the community of contributors and users, and
-allow the maintainers to devote more time to the projects, [please
-donate today].
+###Test
+- Runs unit tests using pytest
 
-[please donate today]: https://palletsprojects.com/donate
-
-## Contributing
-
-See our [detailed contributing documentation][contrib] for many ways to
-contribute, including reporting issues, requesting features, asking or answering
-questions, and making PRs.
-
-[contrib]: https://palletsprojects.com/contributing/
+###Deploy
+- Starts Flask app with:
+ --- bash
+  flask --app flaskr run --host=0.0.0.0 --port=5000
